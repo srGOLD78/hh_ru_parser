@@ -2,7 +2,7 @@ version: '3'
 services:
   hh_bot:
     build: .
-    container_name: hh_bot
+    container_name: hh_bot1
     volumes:
       - .:/app
     ports:

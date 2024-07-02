@@ -1,4 +1,4 @@
-# candidates_parser.py
+
 import aiohttp
 from bs4 import BeautifulSoup
 from vacancies_parser import to_number

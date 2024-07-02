@@ -225,11 +225,24 @@ def get_candidates(limit=10):
         return candidates
 
 
-def remove_duplicates():
+def remove_duplicates_vacancies():
     with sqlite3.connect('my_database.db') as connection:
         cursor = connection.cursor()
         cursor.execute('''
             DELETE FROM vacancies
+            WHERE id NOT IN (
+                SELECT MIN(id)
+                FROM vacancies
+                GROUP BY title, company
+            )
+        ''')
+        connection.commit()
+        print("Дубликаты удалены успешно")
+def remove_duplicates_candidates():
+    with sqlite3.connect('my_database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute('''
+            DELETE FROM candidates
             WHERE id NOT IN (
                 SELECT MIN(id)
                 FROM vacancies

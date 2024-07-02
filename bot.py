@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, filters
 import db
-from db import save_vacancies, save_candidates, get_filtered_vacancies,create_database,clear_vacancies,clear_candidates
+from db import save_vacancies, save_candidates, get_filtered_vacancies,create_database,clear_vacancies,clear_candidates,remove_duplicates_vacancies,remove_duplicates_candidates
 from vacancies_parser import fetch_vacancies
 from candidates_parser import fetch_candidates
 import logging
@@ -168,6 +168,7 @@ def parse_filters(filters_text):
 # Функция для применения фильтров и вывода результатов
 async def apply_filters_vacancies(update: Update, context: CallbackContext, filters: dict) -> None:
     filtered_vacancies = get_filtered_vacancies(filters)
+    remove_duplicates_vacancies()
     if filtered_vacancies:
         response = "Вакансии с применёнными фильтрами:\n\n"
         for idx, vacancy in enumerate(filtered_vacancies[:20], 1):  # Ограничим вывод первыми 20 вакансиями
@@ -180,6 +181,7 @@ async def apply_filters_vacancies(update: Update, context: CallbackContext, filt
 
 async def apply_filters_candidates(update: Update, context: CallbackContext, filters: dict) -> None:
     filtered_candidates = db.get_filtered_candidates(filters)
+    remove_duplicates_candidates()
     if filtered_candidates:
         response = "Соискатели с применёнными фильтрами:\n\n"
         for idx, candidate in enumerate(filtered_candidates[:20], 1):  # Ограничим вывод первыми 20 вакансиями

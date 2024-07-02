@@ -1,9 +1,16 @@
 # Dockerfile
 # Используем базовый образ Python
-FROM python:3.10-slim
+FROM python:3.10-slim-buster
 
 # Устанавливаем зависимости
-RUN pip install --no-cache-dir aiohttp beautifulsoup4 lxml python-telegram-bot telegram Docker docker-compose asyncio
+RUN pip install --no-cache-dir aiohttp \
+    beautifulsoup4 \
+    lxml \
+    python-telegram-bot \
+    telegram \
+    Docker \
+    asyncio \
+    --upgrade pip
 
 
 
