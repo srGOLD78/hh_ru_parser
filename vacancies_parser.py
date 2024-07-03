@@ -1,4 +1,3 @@
-# vacancies_parser.py
 import aiohttp
 from bs4 import BeautifulSoup
 
