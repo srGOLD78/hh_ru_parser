@@ -93,7 +93,7 @@ async def search_vacancies(update: Update, context: CallbackContext, query: str)
     clear_vacancies()
 
     # Поиск вакансий
-    vacancies = await fetch_vacancies(query, pages=2)
+    vacancies = await fetch_vacancies(query, pages=5)
     if vacancies:
         save_vacancies(vacancies)
         await update.message.reply_text(
@@ -109,7 +109,7 @@ async def search_candidates(update: Update, context: CallbackContext, query: str
     clear_candidates()
 
     # Поиск соискателей
-    candidates = await fetch_candidates(query, pages=2)
+    candidates = await fetch_candidates(query, pages=5)
     if candidates:
         save_candidates(candidates)
         await update.message.reply_text(
