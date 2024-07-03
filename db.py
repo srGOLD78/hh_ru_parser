@@ -1,5 +1,4 @@
 import sqlite3
-import math
 import re
 
 
@@ -15,8 +14,8 @@ def create_database():
         title VARCHAR(255),
         company VARCHAR(255),
         salary VARCHAR(255),
-        experience VARCHAR(255),
         city VARCHAR(255),
+        experience VARCHAR(255),
         link TEXT
         )
         ''')
@@ -44,13 +43,13 @@ def save_vacancies(vacancies):
                 title = str(vacancy['title'])
                 company = str(vacancy['company'])
                 salary = str(vacancy['salary'])
-                experience = str(vacancy['experience'])
                 city = str(vacancy['city'])
+                experience = str(vacancy['experience'])
                 link = str(vacancy['link'])
 
                 cursor.execute(
-                    '''INSERT INTO vacancies (title, company, salary, experience, city, link) VALUES (?, ?, ?, ?, ?, ?)''',
-                    (title, company, salary, experience, city, link)
+                    '''INSERT INTO vacancies (title, company, salary, city, experience, link) VALUES (?, ?, ?, ?, ?, ?)''',
+                    (title, company, salary, city, experience, link)
                 )
             connection.commit()
             print("Данные о вакансиях успешно сохранены в базу данных")
@@ -102,7 +101,7 @@ def calculate_average_salary_vacancies():
         cursor.execute(query)
         salary_vacancies = cursor.fetchall()
 
-        if not salary_vacancies: 
+        if not salary_vacancies:
             print("Нет доступных данных о зарплатах для расчета.")
             return None
 
@@ -158,6 +157,7 @@ def calculate_average_salary_candidates():
                 avg_salary = float(salary_val)
             except ValueError:
                 continue
+
             total_salary += avg_salary
             count += 1
 
@@ -195,7 +195,7 @@ def get_vacancies(limit=10):
                 'company': row[2],
                 'salary': row[3],
                 'city': row[4],
-                'experience':row[5],
+                'experience': row[5],
                 'link': row[6]
             })
         return vacancies
@@ -246,6 +246,8 @@ def remove_duplicates_candidates():
         ''')
         connection.commit()
         print("Дубликаты удалены успешно")
+
+
 
 def get_filtered_vacancies(filters):
     with sqlite3.connect('my_database.db') as connection:
