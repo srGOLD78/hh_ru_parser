@@ -44,7 +44,7 @@ async def fetch_candidates(query, pages=1):
                     salary = to_number(salary)
                     age_tag = resume.find(attrs={"data-qa":'resume-serp__resume-age'})
                     age_text = age_tag.text.strip() if age_tag else "0"
-                    age = int(age_text.split()[0])  # Предполагаем, что возраст в формате "33 года"
+                    age = int(age_text.split()[0])
 
                     candidates.append({
                         "title": title,

@@ -185,7 +185,7 @@ async def apply_filters_candidates(update: Update, context: CallbackContext, fil
     if filtered_candidates:
         response = "Соискатели с применёнными фильтрами:\n\n"
         for idx, candidate in enumerate(filtered_candidates[:20], 1):  # Ограничим вывод первыми 20 вакансиями
-            response += f"{idx}. [{candidate['title']}]({candidate['link']})\n - Опыт: {candidate['experience']}\n - {candidate['salary']}\n - Возраст: {candidate['age']}\n"
+            response += f"{idx}. [{candidate['title']}]({candidate['link']})\n - Опыт: {candidate['experience']}\n - Зарплата:{candidate['salary']}\n - Возраст: {candidate['age']}\n"
     else:
         response = "Соискатели с применёнными фильтрами не найдены."
 
