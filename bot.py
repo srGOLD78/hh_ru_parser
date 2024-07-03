@@ -4,7 +4,7 @@ import db
 from db import save_vacancies, save_candidates, get_filtered_vacancies,create_database,clear_vacancies,clear_candidates,remove_duplicates_vacancies,remove_duplicates_candidates
 from vacancies_parser import fetch_vacancies
 from candidates_parser import fetch_candidates
-import logging
+
 
 TOKEN = "6867396131:AAF0uuuYw26_CKSiDZK69KRgRHDV_4DaQvA"
 
@@ -14,9 +14,6 @@ WAITING_FOR_CANDIDATE_QUERY = "WAITING_FOR_CANDIDATE_QUERY"
 WAITING_FOR_CANDIDATE_FILTERS = "WAITING_FOR_CANDIDATE_FILTERS"
 WAITING_FOR_VACANCY_FILTERS = "WAITING_FOR_VACANCY_FILTERS"
 
-# Настройка логгера
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 # Функция для команды /start и главного меню
@@ -195,7 +192,6 @@ async def apply_filters_candidates(update: Update, context: CallbackContext, fil
 
 # Глобальный обработчик ошибок
 async def error_handler(update: Update, context: CallbackContext) -> None:
-    logger.error(msg="Exception while handling an update:", exc_info=context.error)
 
     if update.message:
         await update.message.reply_text("Произошла ошибка, попробуйте снова позже.")
@@ -204,7 +200,6 @@ async def error_handler(update: Update, context: CallbackContext) -> None:
 
 
 if __name__ == '__main__':
-    create_database()
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler('start', start))
