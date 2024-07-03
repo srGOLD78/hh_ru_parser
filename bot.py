@@ -1,27 +1,23 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, filters
 import db
-from db import save_vacancies, save_candidates, get_filtered_vacancies,create_database,clear_vacancies,clear_candidates,remove_duplicates_vacancies,remove_duplicates_candidates
+from db import save_vacancies, save_candidates, get_filtered_vacancies, create_database, clear_vacancies, \
+    clear_candidates, remove_duplicates_vacancies, remove_duplicates_candidates
 from vacancies_parser import fetch_vacancies
 from candidates_parser import fetch_candidates
 
-
 TOKEN = "6867396131:AAF0uuuYw26_CKSiDZK69KRgRHDV_4DaQvA"
 
-# Основные переменные для хранения состояний
 WAITING_FOR_VACANCY_QUERY = "WAITING_FOR_VACANCY_QUERY"
 WAITING_FOR_CANDIDATE_QUERY = "WAITING_FOR_CANDIDATE_QUERY"
 WAITING_FOR_CANDIDATE_FILTERS = "WAITING_FOR_CANDIDATE_FILTERS"
 WAITING_FOR_VACANCY_FILTERS = "WAITING_FOR_VACANCY_FILTERS"
 
 
-
-# Функция для команды /start и главного меню
 async def start(update: Update, context: CallbackContext) -> None:
     await main_menu(update, context)
 
 
-# Функция для отображения главного меню
 async def main_menu(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
@@ -38,7 +34,6 @@ async def main_menu(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text('Выберите действие:', reply_markup=reply_markup)
 
 
-# Функция для обработки нажатий на кнопки меню
 async def menu_handler(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer()
@@ -53,7 +48,6 @@ async def menu_handler(update: Update, context: CallbackContext) -> None:
         await analytics(update, context)
 
 
-# Обработчик текстовых сообщений
 async def handle_text(update: Update, context: CallbackContext) -> None:
     state = context.user_data.get('state')
 
@@ -73,7 +67,7 @@ async def handle_text(update: Update, context: CallbackContext) -> None:
         await apply_filters_vacancies(update, context, filters)
     elif state == WAITING_FOR_CANDIDATE_FILTERS:
         filters_text = update.message.text
-        filters = parse_filters(filters_text)  # Парсим фильтры из ввода пользователя
+        filters = parse_filters(filters_text)
 
         if not filters:
             await update.message.reply_text("Фильтры некорректны. Пожалуйста, попробуйте снова.")
@@ -84,43 +78,40 @@ async def handle_text(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("Пожалуйста, выберите действие из меню.")
 
 
-# Функция для поиска вакансий
 async def search_vacancies(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу вакансии по запросу: {query}")
     clear_vacancies()
 
-    # Поиск вакансий
-    vacancies = await fetch_vacancies(query, pages=70)
+    vacancies = await fetch_vacancies(query, pages=3)
     if vacancies:
         save_vacancies(vacancies)
         await update.message.reply_text(
             "Вакансии сохранены. Введите фильтры в формате: `ключ значение`, например "
-        "`city Москва, salary 100000-150000, experience 2-5`")
+            "`city Москва, salary 100000-150000, experience 2-5`")
         context.user_data['state'] = WAITING_FOR_VACANCY_FILTERS
     else:
         response = "Вакансии не найдены."
         await update.message.reply_text(response, parse_mode='Markdown')
-        context.user_data['state'] = None  # Сброс состояния
+        context.user_data['state'] = None
+
+
 async def search_candidates(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу соискателей по запросу: {query}")
     clear_candidates()
 
-    # Поиск соискателей
-    candidates = await fetch_candidates(query, pages=70)
+    candidates = await fetch_candidates(query, pages=3)
     if candidates:
         save_candidates(candidates)
         await update.message.reply_text(
             "Соискатели сохранены. Введите фильтры в формате: `ключ значение`, например "
-        "`age 30-40,experience 10-20, salary 100000-150000,`")
+            "`age 30-40,experience 10-20, salary 100000-150000,`")
         context.user_data['state'] = WAITING_FOR_CANDIDATE_FILTERS
     else:
         response = "Соискатели не найдены."
         await update.message.reply_text(response, parse_mode='Markdown')
-        context.user_data['state'] = None  # Сброс состояния
+        context.user_data['state'] = None
 
 
-
-# Функция для аналитики
 async def analytics(update: Update, context: CallbackContext) -> None:
     vacancies_count = db.count_vacancies()
     candidates_count = db.count_candidates()
@@ -138,7 +129,6 @@ async def analytics(update: Update, context: CallbackContext) -> None:
     await update.callback_query.message.reply_text(response)
 
 
-# Функция для парсинга фильтров из пользовательского ввода
 def parse_filters(filters_text):
     filters = {}
     parts = filters_text.split(',')
@@ -162,37 +152,36 @@ def parse_filters(filters_text):
     return filters
 
 
-# Функция для применения фильтров и вывода результатов
 async def apply_filters_vacancies(update: Update, context: CallbackContext, filters: dict) -> None:
     filtered_vacancies = get_filtered_vacancies(filters)
     remove_duplicates_vacancies()
     if filtered_vacancies:
         response = "Вакансии с применёнными фильтрами:\n\n"
-        for idx, vacancy in enumerate(filtered_vacancies[:20], 1):  # Ограничим вывод первыми 20 вакансиями
+        for idx, vacancy in enumerate(filtered_vacancies[:20], 1):
             response += f"{idx}. [{vacancy['title']}]({vacancy['link']}) в {vacancy['company']}\n Город: {vacancy['city']}\n Зарплата: {vacancy['salary']}\n Опыт: {vacancy['experience']}\n"
+
     else:
         response = "Вакансии с применёнными фильтрами не найдены."
 
     await update.message.reply_text(response, parse_mode='Markdown')
-    context.user_data['state'] = None  # Сброс состояния
+    context.user_data['state'] = None
+
 
 async def apply_filters_candidates(update: Update, context: CallbackContext, filters: dict) -> None:
     filtered_candidates = db.get_filtered_candidates(filters)
     remove_duplicates_candidates()
     if filtered_candidates:
         response = "Соискатели с применёнными фильтрами:\n\n"
-        for idx, candidate in enumerate(filtered_candidates[:20], 1):  # Ограничим вывод первыми 20 вакансиями
+        for idx, candidate in enumerate(filtered_candidates[:20], 1):
             response += f"{idx}. [{candidate['title']}]({candidate['link']})\n - Опыт: {candidate['experience']}\n - Зарплата:{candidate['salary']}\n - Возраст: {candidate['age']}\n"
     else:
         response = "Соискатели с применёнными фильтрами не найдены."
 
     await update.message.reply_text(response, parse_mode='Markdown')
-    context.user_data['state'] = None  # Сброс состояния
+    context.user_data['state'] = None
 
 
-# Глобальный обработчик ошибок
 async def error_handler(update: Update, context: CallbackContext) -> None:
-
     if update.message:
         await update.message.reply_text("Произошла ошибка, попробуйте снова позже.")
     elif update.callback_query:
@@ -208,6 +197,5 @@ if __name__ == '__main__':
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
     application.add_error_handler(error_handler)
-
 
     application.run_polling()
