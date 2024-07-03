@@ -200,6 +200,7 @@ async def error_handler(update: Update, context: CallbackContext) -> None:
 
 
 if __name__ == '__main__':
+    create_database()
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler('start', start))
