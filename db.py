@@ -37,7 +37,6 @@ def create_database():
 
 
 def save_vacancies(vacancies):
-    """Сохраняет данные о вакансиях в базу данных."""
     with sqlite3.connect('my_database.db') as connection:
         try:
             cursor = connection.cursor()
@@ -60,7 +59,6 @@ def save_vacancies(vacancies):
 
 
 def save_candidates(candidates):
-    """Сохраняет данные о соискателях в базу данных."""
     with sqlite3.connect('my_database.db') as connection:
         try:
             cursor = connection.cursor()
@@ -104,7 +102,7 @@ def calculate_average_salary_vacancies():
         cursor.execute(query)
         salary_vacancies = cursor.fetchall()
 
-        if not salary_vacancies:  # Проверка на пустой список
+        if not salary_vacancies: 
             print("Нет доступных данных о зарплатах для расчета.")
             return None
 
@@ -113,7 +111,6 @@ def calculate_average_salary_vacancies():
 
         for salary in salary_vacancies:
             salary_str = salary[0]
-            # Проверка и парсинг строки зарплаты, например, "1000-2000" или "1000"
             if '-' in salary_str:
                 min_salary, max_salary = salary_str.split('-')
                 min_salary = min_salary.replace(',', '').strip()
@@ -121,18 +118,18 @@ def calculate_average_salary_vacancies():
                 try:
                     avg_salary = (float(min_salary) + float(max_salary)) / 2
                 except ValueError:
-                    continue  # Пропустить некорректные записи
+                    continue
             else:
                 salary_val = salary_str.replace(',', '').strip()
                 try:
                     avg_salary = float(salary_val)
                 except ValueError:
-                    continue  # Пропустить некорректные записи
+                    continue
 
             total_salary += avg_salary
             count += 1
 
-        if count == 0:  # Проверка, чтобы избежать деления на ноль
+        if count == 0:
             print("Нет корректных данных для расчета средней зарплаты.")
             return None
 
@@ -147,7 +144,7 @@ def calculate_average_salary_candidates():
         cursor.execute(query)
         salary_candidates = cursor.fetchall()
 
-        if not salary_candidates:  # Проверка на пустой список
+        if not salary_candidates:
             print("Нет доступных данных о зарплатах для расчета.")
             return None
 
@@ -155,18 +152,16 @@ def calculate_average_salary_candidates():
         count = 0
 
         for salary in salary_candidates:
-            salary_str = salary[0].replace('\xa0', '')  # Удаляем неразрывные пробелы, если они есть
-            # Извлечение числовой части из строки зарплаты с учетом возможных разделителей
-            salary_val = re.sub(r'[^\d.]', '', salary_str)  # Удаление всех символов кроме цифр и точки
+            salary_str = salary[0].replace('\xa0', '')
+            salary_val = re.sub(r'[^\d.]', '', salary_str)
             try:
-                avg_salary = float(salary_val)  # Преобразование числовой строки в число с плавающей точкой
+                avg_salary = float(salary_val)
             except ValueError:
-                continue  # Пропустить некорректные записи
-
+                continue
             total_salary += avg_salary
             count += 1
 
-        if count == 0:  # Проверка, чтобы избежать деления на ноль
+        if count == 0:
             print("Нет корректных данных для расчета средней зарплаты.")
             return None
 
@@ -252,8 +247,6 @@ def remove_duplicates_candidates():
         connection.commit()
         print("Дубликаты удалены успешно")
 
-
-# Функция для получения вакансий с фильтрацией
 def get_filtered_vacancies(filters):
     with sqlite3.connect('my_database.db') as connection:
         cursor = connection.cursor()
