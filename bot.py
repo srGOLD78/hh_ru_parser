@@ -172,7 +172,7 @@ async def apply_filters_vacancies(update: Update, context: CallbackContext, filt
     if filtered_vacancies:
         response = "Вакансии с применёнными фильтрами:\n\n"
         for idx, vacancy in enumerate(filtered_vacancies[:20], 1):  # Ограничим вывод первыми 20 вакансиями
-            response += f"{idx}. [{vacancy['title']}]({vacancy['link']}) в {vacancy['company']}\n {vacancy['city']}\n {vacancy['salary']}\n {vacancy['experience']}\n"
+            response += f"{idx}. [{vacancy['title']}]({vacancy['link']}) в {vacancy['company']}\n Город: {vacancy['city']}\n Зарплата: {vacancy['salary']}\n Опыт: {vacancy['experience']}\n"
     else:
         response = "Вакансии с применёнными фильтрами не найдены."
 

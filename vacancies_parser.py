@@ -9,7 +9,6 @@ def to_number(s: str) -> str:
         if c.isnumeric() or c == '–' or c == '-':
             s1 += c
     return s1
-print(to_number('6 лет 9 месяцев'))
 
 async def fetch_vacancies(query, filters=None, pages=1):
     base_url = "https://hh.ru"

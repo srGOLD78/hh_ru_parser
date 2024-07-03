@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir aiohttp \
 
 
 # Копируем все файлы проекта в контейнер
-COPY . /app
+COPY .. /app
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
