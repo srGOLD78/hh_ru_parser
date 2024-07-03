@@ -1,0 +1,12 @@
+version: '3'
+services:
+  hh_bot:
+    build: .
+    container_name: hh_bot1
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - TOKEN=6867396131:AAF0uuuYw26_CKSiDZK69KRgRHDV_4DaQvA
+    restart: always
