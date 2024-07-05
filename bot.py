@@ -79,7 +79,7 @@ async def handle_text(update: Update, context: CallbackContext) -> None:
 
 async def search_vacancies(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу вакансии по запросу: {query}")
-    vacancies = await fetch_vacancies(query, pages=3)
+    vacancies = await fetch_vacancies(query, pages=70)
     if vacancies:
         save_vacancies(vacancies)
         await update.message.reply_text(
@@ -94,7 +94,7 @@ async def search_vacancies(update: Update, context: CallbackContext, query: str)
 
 async def search_candidates(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу соискателей по запросу: {query}")
-    candidates = await fetch_candidates(query, pages=3)
+    candidates = await fetch_candidates(query, pages=70)
     if candidates:
         save_candidates(candidates)
         await update.message.reply_text(
