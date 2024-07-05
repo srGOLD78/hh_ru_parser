@@ -1,22 +1,16 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, filters
 import db
-from db import save_vacancies, save_candidates, get_filtered_vacancies, create_database, remove_duplicates_vacancies, remove_duplicates_candidates
+from db import save_vacancies, save_candidates, get_filtered_vacancies, create_database, remove_duplicates_vacancies, remove_duplicates_candidates,clear_candidates,clear_vacancies
 from vacancies_parser import fetch_vacancies
 from candidates_parser import fetch_candidates
-
 TOKEN = "6867396131:AAF0uuuYw26_CKSiDZK69KRgRHDV_4DaQvA"
-
 WAITING_FOR_VACANCY_QUERY = "WAITING_FOR_VACANCY_QUERY"
 WAITING_FOR_CANDIDATE_QUERY = "WAITING_FOR_CANDIDATE_QUERY"
 WAITING_FOR_CANDIDATE_FILTERS = "WAITING_FOR_CANDIDATE_FILTERS"
 WAITING_FOR_VACANCY_FILTERS = "WAITING_FOR_VACANCY_FILTERS"
-
-
 async def start(update: Update, context: CallbackContext) -> None:
     await main_menu(update, context)
-
-
 async def main_menu(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
@@ -31,8 +25,6 @@ async def main_menu(update: Update, context: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text('Выберите действие:', reply_markup=reply_markup)
-
-
 async def menu_handler(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer()
@@ -79,7 +71,9 @@ async def handle_text(update: Update, context: CallbackContext) -> None:
 
 async def search_vacancies(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу вакансии по запросу: {query}")
-    vacancies = await fetch_vacancies(query, pages=70)
+    clear_vacancies()
+
+    vacancies = await fetch_vacancies(query, pages=3)
     if vacancies:
         save_vacancies(vacancies)
         await update.message.reply_text(
@@ -94,7 +88,9 @@ async def search_vacancies(update: Update, context: CallbackContext, query: str)
 
 async def search_candidates(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу соискателей по запросу: {query}")
-    candidates = await fetch_candidates(query, pages=70)
+    clear_candidates()
+
+    candidates = await fetch_candidates(query, pages=3)
     if candidates:
         save_candidates(candidates)
         await update.message.reply_text(
