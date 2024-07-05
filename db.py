@@ -176,7 +176,7 @@ def remove_duplicates_vacancies():
             WHERE id NOT IN (
                 SELECT MIN(id)
                 FROM vacancies
-                GROUP BY title, company
+                GROUP BY title, company,salary,city
             )
         ''')
         connection.commit()
@@ -189,7 +189,7 @@ def remove_duplicates_candidates():
             WHERE id NOT IN (
                 SELECT MIN(id)
                 FROM vacancies
-                GROUP BY title, company
+                GROUP BY title, salary,age,experience
             )
         ''')
         connection.commit()
