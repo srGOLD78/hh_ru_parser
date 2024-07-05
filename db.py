@@ -178,48 +178,7 @@ def clear_candidates():
         cursor = connection.cursor()
         cursor.execute("DELETE FROM candidates")
         connection.commit()
-
-
-
-def get_vacancies(limit=10):
-    with sqlite3.connect('my_database.db') as connection:
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM vacancies LIMIT ?', (limit,))
-        rows = cursor.fetchall()
-        vacancies = []
-
-        for row in rows:
-            vacancies.append({
-                'id': row[0],
-                'title': row[1],
-                'company': row[2],
-                'salary': row[3],
-                'city': row[4],
-                'experience': row[5],
-                'link': row[6]
-            })
-        return vacancies
-
-
-def get_candidates(limit=10):
-    with sqlite3.connect('my_database.db') as connection:
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM candidates LIMIT ?', (limit,))
-        rows = cursor.fetchall()
-        candidates = []
-
-        for row in rows:
-            candidates.append({
-                'id': row[0],
-                'title': row[1],
-                'experience': row[2],
-                'salary': row[3],
-                'age': row[4],
-                'link': row[5]
-            })
-        return candidates
-
-
+        
 def remove_duplicates_vacancies():
     with sqlite3.connect('my_database.db') as connection:
         cursor = connection.cursor()
