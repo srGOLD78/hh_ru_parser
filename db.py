@@ -134,7 +134,16 @@ def calculate_average_salary_vacancies():
 
         average_salary = total_salary / count
         return average_salary
-
+def clear_vacancies():
+    with sqlite3.connect('my_database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM vacancies")
+        connection.commit()
+def clear_candidates():
+    with sqlite3.connect('my_database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM candidates")
+        connection.commit()
 
 def calculate_average_salary_candidates():
     with sqlite3.connect('my_database.db') as connection:
