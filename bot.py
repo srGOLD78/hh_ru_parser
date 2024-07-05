@@ -1,8 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, filters
 import db
-from db import save_vacancies, save_candidates, get_filtered_vacancies, create_database, clear_vacancies, \
-    clear_candidates, remove_duplicates_vacancies, remove_duplicates_candidates
+from db import save_vacancies, save_candidates, get_filtered_vacancies, create_database, remove_duplicates_vacancies, remove_duplicates_candidates
 from vacancies_parser import fetch_vacancies
 from candidates_parser import fetch_candidates
 
@@ -80,8 +79,6 @@ async def handle_text(update: Update, context: CallbackContext) -> None:
 
 async def search_vacancies(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу вакансии по запросу: {query}")
-    clear_vacancies()
-
     vacancies = await fetch_vacancies(query, pages=3)
     if vacancies:
         save_vacancies(vacancies)
@@ -97,8 +94,6 @@ async def search_vacancies(update: Update, context: CallbackContext, query: str)
 
 async def search_candidates(update: Update, context: CallbackContext, query: str) -> None:
     await update.message.reply_text(f"Ищу соискателей по запросу: {query}")
-    clear_candidates()
-
     candidates = await fetch_candidates(query, pages=3)
     if candidates:
         save_candidates(candidates)
